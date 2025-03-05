@@ -1,5 +1,5 @@
 #include "pros/misc.h"
-#include <vector>
+#include "pros/misc.hpp"
 #include <functional>
 
 namespace button {
@@ -9,10 +9,13 @@ namespace button {
     };
 
     class Button {
+        private:
+            pros::Controller controller;
+
         public:
-            Button(ActionKey actionKey);
-            void registerKeybinds(pros::controller_digital_e_t button, std::function<void()> callback);
-            void registerKeybind(std::vector<pros::controller_digital_e_t> buttons);
+            Button(pros::Controller& controller);
+            void registerKeybind(ActionKey actionKey, pros::controller_digital_e_t button, std::function<void()> callback);
+            void registerKeybind(pros::controller_digital_e_t button, std::function<void()> callback);
             void reset();
     };
 }
