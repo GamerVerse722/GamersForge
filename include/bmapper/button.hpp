@@ -40,7 +40,8 @@ namespace bmapping::button {
 
         public:
             ButtonHandler(pros::Controller& controller);
-            void registerKeybind(std::set<pros::controller_digital_e_t> keys, keybind_actions_s_t keybind);
+            void registerHotkey(pros::controller_digital_e_t action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind);
+            void registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind);
             void setDelay(int interval);
             int getDelay() const;
             void reset();
