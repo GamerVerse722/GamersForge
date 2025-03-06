@@ -22,19 +22,15 @@ namespace bmapping::button {
         bool wasPressed = false;
     } keybind_state_s_t;
 
-    typedef struct action_key_s {
-        pros::controller_digital_e_t key;
-        keybind_method_t action;
-    } action_key_s_t;
-
     typedef struct keybind_s {
-        std::set<pros::controller_digital_e_t> keys;
+        std::optional<pros::controller_digital_e_t> action_key = std::nullopt;
         keybind_actions_s_t actions;
         keybind_state_s_t state;
     } keybind_s_t;
 
     class ButtonHandler {
         private:
+            std::map<pros::controller_digital_e_t, keybind_s_t> keybinds;
             pros::Controller& controller;
             int delay = 10;
 
