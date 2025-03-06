@@ -5,7 +5,6 @@
 #include <functional>
 #include <optional>
 #include <map>
-#include <set>
 
 namespace bmapping::button {
     typedef std::optional<std::function<void()>> keybind_method_t;
