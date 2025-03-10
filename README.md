@@ -13,6 +13,8 @@
     ```
 
 ## Developer Notes
+
+### Build Instruction
 - To build a template, run:
 
     ```

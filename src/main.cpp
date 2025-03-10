@@ -65,7 +65,7 @@ void opcontrol() {
 
 	using namespace bmapping::button;
 	ButtonHandler button_handler(master);
-	button_handler.registerKeybind(std::nullopt, pros::E_CONTROLLER_DIGITAL_RIGHT, {
+	button_handler.registerKeybind(std::nullopt, pros::E_CONTROLLER_DIGITAL_LEFT, {
 		[&]() -> void {
 			left_mg.move(-127);
 		},

@@ -5,6 +5,7 @@
 #include <functional>
 #include <optional>
 #include <map>
+#include <set>
 
 namespace bmapping::button {
     typedef std::optional<std::function<void()>> keybind_method_t;
@@ -29,7 +30,9 @@ namespace bmapping::button {
 
     class ButtonHandler {
         private:
+            std::map<pros::controller_digital_e_t, keybind_s_t> action_keybinds;
             std::map<pros::controller_digital_e_t, keybind_s_t> keybinds;
+            std::set<pros::controller_digital_e_t> register_key_set;
             pros::Controller& controller;
             bool activated = false;
             int delay = 10;
