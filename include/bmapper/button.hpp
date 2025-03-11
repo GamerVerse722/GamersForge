@@ -54,7 +54,11 @@ namespace bmapping {
              * @param keybind_actions
              */
             void registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions);
+            
+            /** Update the state of the keybinds */
             void update(pros::controller_digital_e_t key);
+
+            /** Run the keybinds */
             void run(pros::controller_digital_e_t key);
 
             /** Start the button handler */
