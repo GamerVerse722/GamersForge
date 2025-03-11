@@ -61,30 +61,30 @@ void autonomous() {}
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup left_mg({-14, -13, -12});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({18, 17, -16});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	pros::MotorGroup right_mg({18, 17, 16});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
 
 	using namespace bmapping::button;
 	ButtonHandler button_handler(master);
 	button_handler.registerKeybind(std::nullopt, pros::E_CONTROLLER_DIGITAL_LEFT, {
-		[&]() -> void {
-			left_mg.move(-127);
+		.onPress = [&]() -> void {
+			right_mg.move(50);
 		},
-		[&]() -> void {
+		.onHold = [&]() -> void {
 			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 1, "%d", rand() % 101);
 		},
-		[&]() -> void {
-			left_mg.move(0);
+		.onRelease = [&]() -> void {
+			right_mg.move(0);
 		}
 	});
 
 	button_handler.registerKeybind(pros::E_CONTROLLER_DIGITAL_DOWN, pros::E_CONTROLLER_DIGITAL_LEFT, {
-		[&]() -> void {
-			right_mg.move(127);
+		.onPress = [&]() -> void {
+			right_mg.move(-50);
 		},
-		[&]() -> void {
+		.onHold = [&]() -> void {
 			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 2, "%d", rand() % 51);
 		},
-		[&]() -> void {
+		.onRelease = [&]() -> void {
 			right_mg.move(0);
 		}
 	});

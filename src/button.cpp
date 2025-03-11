@@ -1,6 +1,7 @@
 #include "bmapper/button.hpp"
 #include "pros/misc.h"
 #include "pros/rtos.hpp"
+#include <iostream>
 
 namespace bmapping::button {
     void ButtonHandler::registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions) {
@@ -44,29 +45,39 @@ namespace bmapping::button {
     }
 
     void ButtonHandler::run(pros::controller_digital_e_t key) {
-        if (this->action_keybinds.contains(key)) {
-            keybind_s_t& action_keybind = this->action_keybinds[key];
-            if (action_keybind.state.isPressed != action_keybind.state.wasPressed && action_keybind.actions.onPress.has_value()) {
-                action_keybind.actions.onPress.value()();
-
-            } else if (action_keybind.state.isHeld && action_keybind.actions.onHold.has_value()) {
-                action_keybind.actions.onHold.value()();
-
-            } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease.has_value()) {
-                action_keybind.actions.onRelease.value()();
-            }
-        }
-
         if (this->keybinds.contains(key)) {
             keybind_s_t& keybind = this->keybinds[key];
-            if (keybind.state.isPressed != keybind.state.wasPressed && keybind.actions.onPress.has_value()) {
+            if (keybind.state.isPressed && !keybind.state.wasPressed && keybind.actions.onPress.has_value()) {
+                std::cout << "Keybind Running press" << std::endl;
                 keybind.actions.onPress.value()();
 
             } else if (keybind.state.isHeld && keybind.actions.onHold.has_value()) {
                 keybind.actions.onHold.value()();
 
             } else if (!keybind.state.isPressed && keybind.state.wasPressed && keybind.actions.onRelease.has_value()) {
+                std::cout << "Keybind Running release" << std::endl;
                 keybind.actions.onRelease.value()();
+            }
+        }
+
+        if (this->action_keybinds.contains(key)) {
+            keybind_s_t& action_keybind = this->action_keybinds[key];
+            if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress.has_value()) {
+                std::cout << "Action Running press" << std::endl;
+                action_keybind.actions.onPress.value()();
+
+            } else if (action_keybind.state.isHeld && action_keybind.actions.onHold.has_value()) {
+                action_keybind.actions.onHold.value()();
+
+            } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease.has_value()) {
+                std::cout << "Action Running release" << std::endl;
+                action_keybind.actions.onRelease.value()();
+                if (this->keybinds.contains(key)) {
+                    keybind_s_t& keybind = this->keybinds[key];
+                    if (keybind.state.isPressed && keybind.actions.onPress.has_value()) {
+                        keybind.actions.onPress.value()();
+                    }
+                }
             }
         }
     }
