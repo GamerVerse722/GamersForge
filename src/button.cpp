@@ -12,9 +12,9 @@ namespace bmapping::button {
         create_keybind.state = keybind_state_s_t{false, false, false};
         
         if (action_key.has_value()) {
-            this->keybinds[key] = create_keybind;
-        } else {
             this->action_keybinds[key] = create_keybind;
+        } else {
+            this->keybinds[key] = create_keybind;
         }
     }
 
@@ -98,5 +98,7 @@ namespace bmapping::button {
 
     void ButtonHandler::reset() {
         this->keybinds.clear();
+        this->action_keybinds.clear();
+        this->register_key_set.clear();
     }
 }
