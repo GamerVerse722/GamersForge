@@ -1,5 +1,4 @@
-# BMapping (WIP)
-- ⚠ Work in progress - Not Functional Yet ⚠
+# BMapping
 
 ## Overview
 - BMapping is a program for vex pros which similifies registering button actions.
