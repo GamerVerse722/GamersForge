@@ -3,7 +3,7 @@
 #include "pros/rtos.hpp"
 #include <iostream>
 
-namespace bmapping::button {
+namespace bmapping {
     void ButtonHandler::registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions) {
         this->register_key_set.insert(key);
 

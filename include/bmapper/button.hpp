@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 
-namespace bmapping::button {
+namespace bmapping {
     typedef std::optional<std::function<void()>> keybind_method_t;
 
     typedef struct keybind_actions_s {
@@ -30,6 +30,7 @@ namespace bmapping::button {
 
     class ButtonHandler {
         private:
+            template <typename... Buttons>bool areKeysPressed(Buttons... buttons);
             std::map<pros::controller_digital_e_t, keybind_s_t> action_keybinds;
             std::map<pros::controller_digital_e_t, keybind_s_t> keybinds;
             std::set<pros::controller_digital_e_t> register_key_set;
@@ -38,15 +39,37 @@ namespace bmapping::button {
             int delay = 10;
 
         public:
+            /**
+             * @brief Construct a new Button Handler object
+             * 
+             * @param controller The controller to listen to
+             */
             ButtonHandler(pros::Controller& controller) : controller(controller) {};
+
+            /**
+             * @brief Register a keybind
+             * 
+             * @param action_key optional action key (acts like a ctrl, alt or shift)
+             * @param key 
+             * @param keybind_actions
+             */
             void registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions);
-            template <typename... Buttons>bool areKeysPressed(Buttons... buttons);
             void update(pros::controller_digital_e_t key);
             void run(pros::controller_digital_e_t key);
+
+            /** Start the button handler */
             void start();
+
+            /** Stop the button handler */
             void stop();
+
+            /** @param interval in milliseconds */
             void setDelay(int interval);
+
+            /** @return interval in milliseconds */
             int getDelay() const;
+
+            /** Reset all keybinds */
             void reset();
         };
 }
