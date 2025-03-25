@@ -1,0 +1,12 @@
+[
+    {
+        "metadata" : {
+            "location": ""
+        },
+        "name": "BMapping",
+        "py/object": "pros.conductor.templates.base_template.BaseTemplate",
+        "supported_kernels": "^4.1.2",
+        "target": "v5",
+        "version": "1.0.0"
+    }
+]
