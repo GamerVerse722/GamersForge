@@ -7,7 +7,7 @@
 - To install BMapping run these program in intergrated terminal in vex pros.
 
     ```
-    pros c add-depot BMapper https://example.com
+    pros c add-depot BMapper https://raw.githubusercontent.com/GamerVerse722/BMapping/refs/heads/depot/stable.json
     pros c apply BMapper
     ```
 
