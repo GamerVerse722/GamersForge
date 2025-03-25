@@ -17,7 +17,7 @@
 - To build a template, run:
 
     ```
-    pros make temple
+    pros make template
     ```
 
 ### Makefile Configuration  
