@@ -1,10 +1,10 @@
-# BMapping
+# BMapper
 
 ## Overview
-- BMapping is a program for vex pros which similifies registering button actions.
+- BMapper is a program for vex pros which simplifies registering button actions.
 
 ## Installation
-- To install BMapping run these program in intergrated terminal in vex pros.
+- To install BMapper run these program in integrated terminal in vex pros.
 
     ```
     pros c add-depot BMapper https://raw.githubusercontent.com/GamerVerse722/BMapping/refs/heads/depot/stable.json
