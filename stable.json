@@ -1,11 +1,11 @@
 [
     {
         "metadata" : {
-            "location": "https://github.com/GamerVerse722/BMapping/releases/download/Release/BMapper%401.0.0.zip"
+            "location": "https://github.com/GamerVerse722/BMapper/releases/download/Release/BMapper@1.0.0.zip"
         },
         "name": "BMapper",
         "py/object": "pros.conductor.templates.base_template.BaseTemplate",
-        "supported_kernels": "^4.1.1",
+        "supported_kernels": "^4.2.0-pre",
         "target": "v5",
         "version": "1.0.0"
     }
