@@ -65,36 +65,32 @@ void opcontrol() {
 
 	using namespace bmapping;
 	ButtonHandler button_handler(master);
-	button_handler.registerKeybind(std::nullopt, pros::E_CONTROLLER_DIGITAL_LEFT, {
-		.onPress = [&]() -> void {
-			right_mg.move(50);
-		},
-		.onHold = [&]() -> void {
-			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 1, "%d", rand() % 101);
-		},
-		.onRelease = [&]() -> void {
-			right_mg.move(0);
-		}
-	});
 
-	button_handler.registerKeybind(pros::E_CONTROLLER_DIGITAL_DOWN, pros::E_CONTROLLER_DIGITAL_LEFT, {
-		.onPress = [&]() -> void {
-			right_mg.move(-50);
-		},
-		.onHold = [&]() -> void {
-			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 2, "%d", rand() % 51);
-		},
-		.onRelease = [&]() -> void {
+	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT)
+		.onPress([&]() -> void {
+			right_mg.move(50);
+		})
+		.onHold([&]() -> void {
+			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 1, "%d", rand() % 101);
+		})
+		.onRelease([&]() -> void {
 			right_mg.move(0);
-		}
-	});
+		});
+
+	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_DOWN)
+		.onPress([&]() -> void {
+			right_mg.move(-50);
+		})
+		.onHold([&]() -> void {
+			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 2, "%d", rand() % 51);
+		})
+		.onRelease([&]() -> void {
+			right_mg.move(0);
+		});
 
 	button_handler.start();
 	
 	while (true) {
-		// pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		//                  (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		//                  (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
 		pros::delay(20);
 	}
 }

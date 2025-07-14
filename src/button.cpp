@@ -2,9 +2,41 @@
 #include "pros/misc.h"
 #include "pros/rtos.hpp"
 #include <iostream>
+#include <optional>
 
 namespace bmapping {
-    void ButtonHandler::registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions) {
+    KeybindBuilder::~KeybindBuilder() {
+        if (!applied) {
+            handler.registerKeybind(key, actions, actionKey);
+        }
+    }
+
+    KeybindBuilder& KeybindBuilder::onPress(keybind_method_t callback) {
+        actions.onPress = callback;
+        return *this;
+    }
+
+    KeybindBuilder& KeybindBuilder::onHold(keybind_method_t callback) {
+        actions.onHold = callback;
+        return *this;
+    }
+
+    KeybindBuilder& KeybindBuilder::onRelease(keybind_method_t callback) {
+        actions.onRelease = callback;
+        return *this;
+    }
+
+    KeybindBuilder& KeybindBuilder::withActionKey(pros::controller_digital_e_t modifier) {
+        actionKey = modifier;
+        return *this;
+    }
+
+    void KeybindBuilder::apply() {
+        applied = true;
+        handler.registerKeybind(key, actions, actionKey);
+    }
+
+    void ButtonHandler::registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key) {
         this->register_key_set.insert(key);
 
         keybind_s_t create_keybind;
@@ -47,35 +79,35 @@ namespace bmapping {
     void ButtonHandler::run(pros::controller_digital_e_t key) {
         if (this->keybinds.contains(key)) {
             keybind_s_t& keybind = this->keybinds[key];
-            if (keybind.state.isPressed && !keybind.state.wasPressed && keybind.actions.onPress.has_value()) {
+            if (keybind.state.isPressed && !keybind.state.wasPressed && keybind.actions.onPress) {
                 std::cout << "Keybind Running press" << std::endl;
-                keybind.actions.onPress.value()();
+                keybind.actions.onPress();
 
-            } else if (keybind.state.isHeld && keybind.actions.onHold.has_value()) {
-                keybind.actions.onHold.value()();
+            } else if (keybind.state.isHeld && keybind.actions.onHold) {
+                keybind.actions.onHold();
 
-            } else if (!keybind.state.isPressed && keybind.state.wasPressed && keybind.actions.onRelease.has_value()) {
+            } else if (!keybind.state.isPressed && keybind.state.wasPressed && keybind.actions.onRelease) {
                 std::cout << "Keybind Running release" << std::endl;
-                keybind.actions.onRelease.value()();
+                keybind.actions.onRelease();
             }
         }
 
         if (this->action_keybinds.contains(key)) {
             keybind_s_t& action_keybind = this->action_keybinds[key];
-            if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress.has_value()) {
+            if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress) {
                 std::cout << "Action Running press" << std::endl;
-                action_keybind.actions.onPress.value()();
+                action_keybind.actions.onPress();
 
-            } else if (action_keybind.state.isHeld && action_keybind.actions.onHold.has_value()) {
-                action_keybind.actions.onHold.value()();
+            } else if (action_keybind.state.isHeld && action_keybind.actions.onHold) {
+                action_keybind.actions.onHold();
 
-            } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease.has_value()) {
+            } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease) {
                 std::cout << "Action Running release" << std::endl;
-                action_keybind.actions.onRelease.value()();
+                action_keybind.actions.onRelease();
                 if (this->keybinds.contains(key)) {
                     keybind_s_t& keybind = this->keybinds[key];
-                    if (keybind.state.isPressed && keybind.actions.onPress.has_value()) {
-                        keybind.actions.onPress.value()();
+                    if (keybind.state.isPressed && keybind.actions.onPress) {
+                        keybind.actions.onPress();
                     }
                 }
             }

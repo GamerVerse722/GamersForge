@@ -8,12 +8,14 @@
 #include <set>
 
 namespace bmapping {
-    typedef std::optional<std::function<void()>> keybind_method_t;
+    class ButtonHandler;
+
+    typedef std::function<void()> keybind_method_t;
 
     typedef struct keybind_actions_s {
-        keybind_method_t onPress = std::nullopt;
-        keybind_method_t onHold = std::nullopt;
-        keybind_method_t onRelease = std::nullopt;
+        keybind_method_t onPress = nullptr;
+        keybind_method_t onHold = nullptr;
+        keybind_method_t onRelease = nullptr;
     } keybind_actions_s_t;
 
     typedef struct keybind_state {
@@ -27,6 +29,34 @@ namespace bmapping {
         keybind_actions_s_t actions;
         keybind_state_s_t state;
     } keybind_s_t;
+
+    class KeybindBuilder {
+        private:
+            bmapping::keybind_actions_s actions;
+            std::optional<pros::controller_digital_e_t> actionKey;
+            pros::controller_digital_e_t key;
+            bmapping::ButtonHandler& handler;
+            bool applied = false;
+
+        public:
+            KeybindBuilder(
+                pros::controller_digital_e_t key,
+                bmapping::ButtonHandler& handler,
+                std::optional<pros::controller_digital_e_t> modifier = std::nullopt)
+            : key(key), handler(handler), actionKey(modifier) {}
+
+            ~KeybindBuilder();
+
+            KeybindBuilder& onPress(keybind_method_t callback);
+
+            KeybindBuilder& onHold(keybind_method_t callback);
+
+            KeybindBuilder& onRelease(keybind_method_t callback);
+
+            KeybindBuilder& withActionKey(pros::controller_digital_e_t modifier);
+
+            void apply();
+    };
 
     class ButtonHandler {
         private:
@@ -47,13 +77,25 @@ namespace bmapping {
             ButtonHandler(pros::Controller& controller) : controller(controller) {};
 
             /**
+             * @brief KeybindBuilder method lets user create keybinds easily
+             * 
+             * @param key 
+             * @param modifier 
+             * @return KeybindBuilder 
+             */
+            KeybindBuilder bind(pros::controller_digital_e_t key,
+                            std::optional<pros::controller_digital_e_t> modifier = std::nullopt) {
+                return KeybindBuilder(key, *this, modifier);
+            }
+
+            /**
              * @brief Register a keybind
              * 
              * @param action_key optional action key (acts like a ctrl, alt or shift)
              * @param key 
              * @param keybind_actions
              */
-            void registerKeybind(std::optional<pros::controller_digital_e_t> action_key, pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions);
+            void registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key = std::nullopt);
             
             /** Update the state of the keybinds */
             void update(pros::controller_digital_e_t key);
