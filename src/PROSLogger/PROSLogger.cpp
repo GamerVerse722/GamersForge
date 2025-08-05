@@ -5,13 +5,14 @@
 
 
 namespace PROSLogger {
-    void Logger::log(const std::string& message, const LogLevel level) const {
+    void Logger::log(const std::string& message, LogLevel level) {
+        std::cout << level << Manager::level << std::endl;
         if (level < Manager::getLevel()) return;
 
         const std::string formatted_message = std::format("[00:00:00] [{}] [{}] {}", levelToString(level), id, message);
 
         if (Manager::isConsoleEnabled()) {
-            std::cout << levelToColor(level) << formatted_message << std::endl;
+            std::cout << formatted_message << std::endl;
         }
 
         Manager::notify({
@@ -22,18 +23,18 @@ namespace PROSLogger {
         });
     }
 
-    void Logger::debug(const std::string &message) const { log(message, DEBUG); }
-    void Logger::info(const std::string &message) const { log(message, INFO); }
-    void Logger::warn(const std::string &message) const { log(message, WARN); }
-    void Logger::error(const std::string &message) const { log(message, ERROR); }
+    void Logger::debug(const std::string &message) { log(message, DEBUG); }
+    void Logger::info(const std::string &message) { log(message, INFO); }
+    void Logger::warn(const std::string &message) { log(message, WARN); }
+    void Logger::error(const std::string &message) { log(message, ERROR); }
 }
 
 namespace PROSLogger::Manager {
-    LogLevel level = DEBUG;
+    LogLevel level = LogLevel::DEBUG;
     std::vector<Subscriber> subscribers;
     bool consoleEnabled = true;
 
-    void setLevel(const LogLevel level) {
+    void setLevel(LogLevel level) {
         Manager::level = level;
     }
 
@@ -41,7 +42,7 @@ namespace PROSLogger::Manager {
         return level;
     }
 
-    void setConsoleEnabled(const bool enabled) {
+    void setConsoleEnabled(bool enabled) {
         consoleEnabled = enabled;
     }
 

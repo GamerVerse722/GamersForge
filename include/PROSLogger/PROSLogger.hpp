@@ -5,10 +5,10 @@
 
 namespace PROSLogger {
     enum LogLevel {
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR
+        DEBUG = 0,
+        INFO = 1,
+        WARN = 2,
+        ERROR = 3
     };
 
     inline std::string levelToString(LogLevel level) {
@@ -46,16 +46,20 @@ namespace PROSLogger {
         public:
             explicit Logger(std::string loggerId): id(loggerId) {}
 
-            void log(const std::string& message, LogLevel level) const;
+            void log(const std::string& message, LogLevel level);
 
-            void debug(const std::string &message) const;
-            void info(const std::string &message) const;
-            void warn(const std::string &message) const;
-            void error(const std::string &message) const;
+            void debug(const std::string &message);
+            void info(const std::string &message);
+            void warn(const std::string &message);
+            void error(const std::string &message);
     };
 }
 
 namespace PROSLogger::Manager {
+    extern LogLevel level;
+    extern bool consoleEnabled;
+    extern std::vector<Subscriber> subscribers;
+
     void setLevel(LogLevel level);
     LogLevel getLevel();
 
