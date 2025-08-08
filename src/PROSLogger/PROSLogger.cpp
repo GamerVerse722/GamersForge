@@ -6,7 +6,6 @@
 
 namespace PROSLogger {
     void Logger::log(const std::string& message, LogLevel level) {
-        std::cout << level << Manager::level << std::endl;
         if (level < Manager::getLevel()) return;
 
         const std::string formatted_message = std::format("[00:00:00] [{}] [{}] {}", levelToString(level), id, message);
