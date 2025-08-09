@@ -6,6 +6,7 @@
 #include <optional>
 #include <map>
 #include <set>
+#include <string>
 
 namespace bmapping {
     class ButtonHandler;
@@ -28,7 +29,26 @@ namespace bmapping {
         std::optional<pros::controller_digital_e_t> action_key = std::nullopt;
         keybind_actions_s_t actions;
         keybind_state_s_t state;
+        std::string id = "";
     } keybind_s_t;
+    
+    inline std::string keyToShort(pros::controller_digital_e_t key) {
+        switch (key) {
+            case pros::E_CONTROLLER_DIGITAL_L1: return "L1";
+            case pros::E_CONTROLLER_DIGITAL_L2: return "L2";
+            case pros::E_CONTROLLER_DIGITAL_R1: return "R1";
+            case pros::E_CONTROLLER_DIGITAL_R2: return "R2";
+            case pros::E_CONTROLLER_DIGITAL_UP: return "U";
+            case pros::E_CONTROLLER_DIGITAL_DOWN: return "D";
+            case pros::E_CONTROLLER_DIGITAL_LEFT: return "L";
+            case pros::E_CONTROLLER_DIGITAL_RIGHT: return "R";
+            case pros::E_CONTROLLER_DIGITAL_A: return "A";
+            case pros::E_CONTROLLER_DIGITAL_B: return "B";
+            case pros::E_CONTROLLER_DIGITAL_X: return "X";
+            case pros::E_CONTROLLER_DIGITAL_Y: return "Y";
+            default: return "??";
+        }
+    }
 
     class KeybindBuilder {
         private:
@@ -36,14 +56,14 @@ namespace bmapping {
             std::optional<pros::controller_digital_e_t> actionKey;
             pros::controller_digital_e_t key;
             bmapping::ButtonHandler& handler;
+            std::string category = "Uncategorized";
             bool applied = false;
 
         public:
             KeybindBuilder(
                 pros::controller_digital_e_t key,
                 bmapping::ButtonHandler& handler,
-                std::optional<pros::controller_digital_e_t> modifier = std::nullopt)
-            : key(key), handler(handler), actionKey(modifier) {}
+                std::optional<pros::controller_digital_e_t> modifier = std::nullopt);
 
             ~KeybindBuilder();
 
@@ -53,7 +73,7 @@ namespace bmapping {
 
             KeybindBuilder& onRelease(keybind_method_t callback);
 
-            KeybindBuilder& withActionKey(pros::controller_digital_e_t modifier);
+            KeybindBuilder& setCategory(std::string category);
 
             void apply();
     };
@@ -83,8 +103,9 @@ namespace bmapping {
              * @param modifier 
              * @return KeybindBuilder 
              */
-            KeybindBuilder bind(pros::controller_digital_e_t key,
-                            std::optional<pros::controller_digital_e_t> modifier = std::nullopt) {
+            KeybindBuilder bind(
+                pros::controller_digital_e_t key, 
+                std::optional<pros::controller_digital_e_t> modifier = std::nullopt) {
                 return KeybindBuilder(key, *this, modifier);
             }
 
@@ -95,7 +116,11 @@ namespace bmapping {
              * @param key 
              * @param keybind_actions
              */
-            void registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key = std::nullopt);
+            void registerKeybind(
+                pros::controller_digital_e_t key,
+                keybind_actions_s_t keybind_actions,
+                std::optional<pros::controller_digital_e_t> action_key = std::nullopt,
+                std::string category = "Uncategorized");
             
             /** Update the state of the keybinds */
             void update(pros::controller_digital_e_t key);

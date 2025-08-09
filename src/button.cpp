@@ -5,9 +5,13 @@
 #include <optional>
 
 namespace bmapping {
+    KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, bmapping::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
+        
+    }
+
     KeybindBuilder::~KeybindBuilder() {
         if (!applied) {
-            handler.registerKeybind(key, actions, actionKey);
+            handler.registerKeybind(key, actions, actionKey, this->category);
         }
     }
 
@@ -26,17 +30,17 @@ namespace bmapping {
         return *this;
     }
 
-    KeybindBuilder& KeybindBuilder::withActionKey(pros::controller_digital_e_t modifier) {
-        actionKey = modifier;
+    KeybindBuilder& KeybindBuilder::setCategory(std::string category) {
+        this->category = category;
         return *this;
     }
 
     void KeybindBuilder::apply() {
         applied = true;
-        handler.registerKeybind(key, actions, actionKey);
+        handler.registerKeybind(key, actions, actionKey, this->category);
     }
 
-    void ButtonHandler::registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key) {
+    void ButtonHandler::registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key, std::string category) {
         this->register_key_set.insert(key);
 
         keybind_s_t create_keybind;
