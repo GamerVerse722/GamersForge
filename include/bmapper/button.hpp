@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PROSLogger/PROSLogger.hpp"
 #include "pros/misc.h"
 #include "pros/misc.hpp"
 #include <functional>
@@ -49,7 +50,7 @@ namespace bmapping {
             default: return "??";
         }
     }
-
+    
     class KeybindBuilder {
         private:
             bmapping::keybind_actions_s actions;
@@ -84,10 +85,12 @@ namespace bmapping {
             std::map<pros::controller_digital_e_t, keybind_s_t> action_keybinds;
             std::map<pros::controller_digital_e_t, keybind_s_t> keybinds;
             std::set<pros::controller_digital_e_t> register_key_set;
+            std::set<std::string> register_id_set;
             pros::Controller& controller;
             bool activated = false;
             int delay = 10;
 
+            PROSLogger::Logger log{"ButtonHandler"};
         public:
             /**
              * @brief Construct a new Button Handler object
@@ -139,6 +142,8 @@ namespace bmapping {
 
             /** @return interval in milliseconds */
             int getDelay() const;
+            
+            std::set<std::string> getKeybindIds();
 
             /** Reset all keybinds */
             void reset();

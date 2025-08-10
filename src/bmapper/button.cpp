@@ -1,8 +1,10 @@
 #include "bmapper/button.hpp"
 #include "pros/misc.h"
 #include "pros/rtos.hpp"
+#include <format>
 #include <iostream>
 #include <optional>
+#include <string>
 
 namespace bmapping {
     KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, bmapping::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
@@ -49,10 +51,16 @@ namespace bmapping {
         create_keybind.state = keybind_state_s_t{false, false, false};
         
         if (action_key.has_value()) {
+            create_keybind.id = std::format("{}/{}-{}", category, keyToShort(key), keyToShort(action_key.value()));
             this->action_keybinds[key] = create_keybind;
+
         } else {
+            create_keybind.id = std::format("{}/{}", category, keyToShort(key));
             this->keybinds[key] = create_keybind;
         }
+
+        this->register_id_set.insert(create_keybind.id);
+        log.info("Registered Keybind: " + create_keybind.id);
     }
 
     template <typename... Buttons> bool ButtonHandler::areKeysPressed(Buttons... buttons) {
@@ -84,14 +92,15 @@ namespace bmapping {
         if (this->keybinds.contains(key)) {
             keybind_s_t& keybind = this->keybinds[key];
             if (keybind.state.isPressed && !keybind.state.wasPressed && keybind.actions.onPress) {
-                std::cout << "Keybind Running press" << std::endl;
+                log.debug(std::format("Keybind {} onPress", keybind.id));
                 keybind.actions.onPress();
 
             } else if (keybind.state.isHeld && keybind.actions.onHold) {
+                log.debug(std::format("Keybind {} onHold", keybind.id));
                 keybind.actions.onHold();
 
             } else if (!keybind.state.isPressed && keybind.state.wasPressed && keybind.actions.onRelease) {
-                std::cout << "Keybind Running release" << std::endl;
+                log.debug(std::format("Keybind {} onRelease", keybind.id));
                 keybind.actions.onRelease();
             }
         }
@@ -100,17 +109,20 @@ namespace bmapping {
             keybind_s_t& action_keybind = this->action_keybinds[key];
             if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress) {
                 std::cout << "Action Running press" << std::endl;
+                log.debug(std::format("Keybind {} onPress", action_keybind.id));
                 action_keybind.actions.onPress();
 
             } else if (action_keybind.state.isHeld && action_keybind.actions.onHold) {
+                log.debug(std::format("Keybind {} onHold", action_keybind.id));
                 action_keybind.actions.onHold();
 
             } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease) {
-                std::cout << "Action Running release" << std::endl;
+                log.debug(std::format("Keybind {} onRelease", action_keybind.id));
                 action_keybind.actions.onRelease();
                 if (this->keybinds.contains(key)) {
                     keybind_s_t& keybind = this->keybinds[key];
                     if (keybind.state.isPressed && keybind.actions.onPress) {
+                        log.debug(std::format("Keybind fallback from onRelease {} to onPress {}", action_keybind.id, keybind.id));
                         keybind.actions.onPress();
                     }
                 }
@@ -120,6 +132,7 @@ namespace bmapping {
     
     void ButtonHandler::start() {
         this->activated = true;
+        log.info("ButtonHandler started");
         pros::Task button_task([&] {
             while (this->activated) {
                 for (auto key : this->register_key_set) {
@@ -133,9 +146,11 @@ namespace bmapping {
 
     void ButtonHandler::stop() {
         this->activated = false;
+        log.info("ButtonHandler stopped");
     }
 
     void ButtonHandler::setDelay(int interval) {
+        log.debug("ButtonHandler delay set to " + std::to_string(interval) + "ms");
         this->delay = interval;
     }
 
@@ -147,5 +162,6 @@ namespace bmapping {
         this->keybinds.clear();
         this->action_keybinds.clear();
         this->register_key_set.clear();
+        log.info("All keybinds cleared");
     }
 }

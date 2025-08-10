@@ -1,4 +1,5 @@
 #include "main.h"
+#include "PROSLogger/PROSLogger.hpp"
 #include "bmapper/button.hpp"
 #include "pros/misc.h"
 #include "pros/screen.h"
@@ -60,13 +61,17 @@ void autonomous() {}
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({-1, 2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({4, -5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	pros::MotorGroup left_mg({-1, 2, 3});
+	pros::MotorGroup right_mg({4, -5, -6});
 
 	using namespace bmapping;
+	using namespace PROSLogger;
 	ButtonHandler button_handler(master);
 
+	Manager::setLevel(LogLevel::DEBUG);
+
 	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT)
+		.setCategory("RightMotor")
 		.onPress([&]() -> void {
 			right_mg.move(50);
 		})
@@ -78,6 +83,7 @@ void opcontrol() {
 		});
 
 	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_DOWN)
+		.setCategory("RightMotor")
 		.onPress([&]() -> void {
 			right_mg.move(-50);
 		})
