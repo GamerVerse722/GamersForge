@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "PROSLogger": {
-                "location": "/Users/cristianrios/Library/Application Support/PROS/templates/PROSLogger@1.0.1",
+                "location": "/Users/cristianrios/Library/Application Support/PROS/templates/PROSLogger@1.0.2",
                 "metadata": {
                     "origin": "PROSLogger"
                 },
@@ -13,12 +13,12 @@
                 "py/object": "pros.conductor.templates.local_template.LocalTemplate",
                 "supported_kernels": "^4.2.1",
                 "system_files": [
-                    "include/PROSLogger/PROSLogger.hpp",
-                    "firmware/PROSLogger.a"
+                    "firmware/PROSLogger.a",
+                    "include/PROSLogger/PROSLogger.hpp"
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "1.0.1"
+                "version": "1.0.2"
             },
             "kernel": {
                 "location": "C:\\Users\\crist\\AppData\\Roaming\\PROS\\templates\\kernel@4.2.1",
