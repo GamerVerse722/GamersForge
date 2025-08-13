@@ -1,4 +1,5 @@
 #include "PROSLogger/PROSLogger.hpp"
+#include "pros/rtos.hpp"
 
 #include <format>
 #include <iostream>
@@ -8,7 +9,16 @@ namespace PROSLogger {
     void Logger::log(const std::string& message, LogLevel level) {
         if (level < Manager::getLevel()) return;
 
-        const std::string formatted_message = std::format("[00:00:00] [{}] [{}] {}", levelToString(level), id, message);
+        int millis = pros::millis();
+        int total_seconds = millis / 1000;
+
+        int hours = total_seconds / 3600;
+        int minutes = (total_seconds % 3600) / 60;
+        int seconds = total_seconds % 60;
+
+        const std::string time = std::format("[{:02}:{:02}:{:02}]", hours, minutes, seconds);
+
+        const std::string formatted_message = std::format("[{}] [{}] [{}] {}", time, levelToString(level), id, message);
 
         if (Manager::isConsoleEnabled()) {
             std::cout << formatted_message << std::endl;
@@ -16,6 +26,7 @@ namespace PROSLogger {
 
         Manager::notify({
             level,
+            time,
             id,
             message,
             formatted_message
