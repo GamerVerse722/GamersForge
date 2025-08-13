@@ -5,7 +5,7 @@
         "target": "v5",
         "templates": {
             "PROSLogger": {
-                "location": "C:\\Users\\crist\\AppData\\Roaming\\PROS\\templates\\PROSLogger@1.0.0",
+                "location": "/Users/cristianrios/Library/Application Support/PROS/templates/PROSLogger@1.0.1",
                 "metadata": {
                     "origin": "PROSLogger"
                 },
@@ -18,7 +18,7 @@
                 ],
                 "target": "v5",
                 "user_files": [],
-                "version": "1.0.0"
+                "version": "1.0.1"
             },
             "kernel": {
                 "location": "C:\\Users\\crist\\AppData\\Roaming\\PROS\\templates\\kernel@4.2.1",
