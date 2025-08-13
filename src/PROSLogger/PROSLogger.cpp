@@ -12,11 +12,11 @@ namespace PROSLogger {
         int millis = pros::millis();
         int total_seconds = millis / 1000;
 
-        int hours = total_seconds / 3600;
-        int minutes = (total_seconds % 3600) / 60;
+        int milliseconds = millis % 1000;
         int seconds = total_seconds % 60;
+        int minutes = total_seconds / 60;
 
-        const std::string time = std::format("[{:02}:{:02}:{:02}]", hours, minutes, seconds);
+        const std::string time = std::format("{:02}:{:02}:{:03}", minutes, seconds, milliseconds);
 
         const std::string formatted_message = std::format("[{}] [{}] [{}] {}", time, levelToString(level), id, message);
 
