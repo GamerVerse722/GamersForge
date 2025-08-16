@@ -1,10 +1,7 @@
 #include "bmapper/button.hpp"
-#include "pros/misc.h"
 #include "pros/rtos.hpp"
 #include <format>
-#include <iostream>
 #include <optional>
-#include <string>
 
 namespace bmapping {
     KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, bmapping::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
@@ -108,7 +105,6 @@ namespace bmapping {
         if (this->action_keybinds.contains(key)) {
             keybind_s_t& action_keybind = this->action_keybinds[key];
             if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress) {
-                std::cout << "Action Running press" << std::endl;
                 log.debug(std::format("Keybind {} onPress", action_keybind.id));
                 action_keybind.actions.onPress();
 
