@@ -23,6 +23,7 @@ namespace PROSLogger {
 
     struct LoggerEvent {
         LogLevel level;
+        std::string time;
         std::string groupId;
         std::string message;
         std::string formattedMessage;
