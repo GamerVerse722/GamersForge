@@ -5,31 +5,40 @@
 
 namespace bmapping {
     KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, bmapping::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
-        
+        if (modifier.has_value()) {
+            log.info(std::format("Created Keybind Builder: {}-{}", keyToShort(key), keyToShort(modifier.value())));
+        } else {
+            log.info("Created Keybind Builder: " + keyToShort(key));
+        }
     }
 
     KeybindBuilder::~KeybindBuilder() {
         if (!applied) {
             handler.registerKeybind(key, actions, actionKey, this->category);
+            log.info("Keybind applied in destructor");
         }
     }
 
     KeybindBuilder& KeybindBuilder::onPress(keybind_method_t callback) {
+        log.debug("onPress callback set.");
         actions.onPress = callback;
         return *this;
     }
 
     KeybindBuilder& KeybindBuilder::onHold(keybind_method_t callback) {
+        log.debug("onHold callback set.");
         actions.onHold = callback;
         return *this;
     }
 
     KeybindBuilder& KeybindBuilder::onRelease(keybind_method_t callback) {
+        log.debug("onRelease callback set.");
         actions.onRelease = callback;
         return *this;
     }
 
     KeybindBuilder& KeybindBuilder::setCategory(std::string category) {
+        log.info("Category set to: " + category);
         this->category = category;
         return *this;
     }
@@ -37,6 +46,7 @@ namespace bmapping {
     void KeybindBuilder::apply() {
         applied = true;
         handler.registerKeybind(key, actions, actionKey, this->category);
+        log.info("Keybind applied explicitly");
     }
 
     void ButtonHandler::registerKeybind(pros::controller_digital_e_t key, keybind_actions_s_t keybind_actions, std::optional<pros::controller_digital_e_t> action_key, std::string category) {

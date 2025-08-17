@@ -53,12 +53,14 @@ namespace bmapping {
     
     class KeybindBuilder {
         private:
-            bmapping::keybind_actions_s actions;
             std::optional<pros::controller_digital_e_t> actionKey;
+            bmapping::keybind_actions_s actions;
             pros::controller_digital_e_t key;
             bmapping::ButtonHandler& handler;
-            std::string category = "Uncategorized";
             bool applied = false;
+            
+            PROSLogger::Logger log{"KeybindBuilder"};
+            std::string category = "Uncategorized";
 
         public:
             KeybindBuilder(
