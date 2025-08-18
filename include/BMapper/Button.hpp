@@ -9,7 +9,7 @@
 #include <set>
 #include <string>
 
-namespace bmapping {
+namespace BMapper {
     class ButtonHandler;
 
     typedef std::function<void()> keybind_method_t;
@@ -58,9 +58,9 @@ namespace bmapping {
     class KeybindBuilder {
         private:
             std::optional<pros::controller_digital_e_t> actionKey;
-            bmapping::keybind_actions_s actions;
+            BMapper::keybind_actions_s actions;
             pros::controller_digital_e_t key;
-            bmapping::ButtonHandler& handler;
+            BMapper::ButtonHandler& handler;
             bool applied = false;
             
             PROSLogger::Logger log{"KeybindBuilder"};
@@ -69,7 +69,7 @@ namespace bmapping {
         public:
             KeybindBuilder(
                 pros::controller_digital_e_t key,
-                bmapping::ButtonHandler& handler,
+                BMapper::ButtonHandler& handler,
                 std::optional<pros::controller_digital_e_t> modifier = std::nullopt);
 
             ~KeybindBuilder();

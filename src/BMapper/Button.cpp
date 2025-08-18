@@ -3,8 +3,8 @@
 #include <format>
 #include <optional>
 
-namespace bmapping {
-    KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, bmapping::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
+namespace BMapper {
+    KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, BMapper::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
         if (modifier.has_value()) {
             log.info(std::format("Created Keybind Builder: {}-{}", keyToShort(key), keyToShort(modifier.value())));
         } else {

@@ -64,7 +64,7 @@ void opcontrol() {
 	pros::MotorGroup left_mg({-1, 2, 3});
 	pros::MotorGroup right_mg({4, -5, -6});
 
-	using namespace bmapping;
+	using namespace BMapper;
 	using namespace PROSLogger;
 	ButtonHandler button_handler(master);
 
