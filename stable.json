@@ -1,7 +1,7 @@
 [
     {
         "metadata" : {
-            "location": "https://github.com/GamerVerse722/BMapper/releases/download/Release/BMapper@1.0.0.zip"
+            "location": "https://github.com/GamerVerse722/BMapper/releases/download/v1.0.0/BMapper@1.0.0.zip"
         },
         "name": "BMapper",
         "py/object": "pros.conductor.templates.base_template.BaseTemplate",
