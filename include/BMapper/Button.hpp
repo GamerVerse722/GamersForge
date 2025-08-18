@@ -18,6 +18,10 @@ namespace bmapping {
         keybind_method_t onPress = nullptr;
         keybind_method_t onHold = nullptr;
         keybind_method_t onRelease = nullptr;
+
+        bool onPressTask = false;
+        bool onHoldTask = false;
+        bool onReleaseTask = false;
     } keybind_actions_s_t;
 
     typedef struct keybind_state {
@@ -70,11 +74,11 @@ namespace bmapping {
 
             ~KeybindBuilder();
 
-            KeybindBuilder& onPress(keybind_method_t callback);
+            KeybindBuilder& onPress(keybind_method_t callback, bool tasked = false);
 
-            KeybindBuilder& onHold(keybind_method_t callback);
+            KeybindBuilder& onHold(keybind_method_t callback, bool tasked = false);
 
-            KeybindBuilder& onRelease(keybind_method_t callback);
+            KeybindBuilder& onRelease(keybind_method_t callback, bool tasked = false);
 
             KeybindBuilder& setCategory(std::string category);
 
@@ -93,6 +97,21 @@ namespace bmapping {
             int delay = 10;
 
             PROSLogger::Logger log{"ButtonHandler"};
+
+            void registerKeybind(
+                pros::controller_digital_e_t key,
+                keybind_actions_s_t keybind_actions,
+                std::optional<pros::controller_digital_e_t> action_key = std::nullopt,
+                std::string category = "Uncategorized");
+
+            void executeAction(const std::string& name, const std::string& id, keybind_method_t action, bool runAsTask);
+            void handleKeybind(keybind_s_t keybind);
+
+            void update(pros::controller_digital_e_t key);
+            void run(pros::controller_digital_e_t key);
+
+            friend class KeybindBuilder;
+
         public:
             /**
              * @brief Construct a new Button Handler object
@@ -114,25 +133,6 @@ namespace bmapping {
                 return KeybindBuilder(key, *this, modifier);
             }
 
-            /**
-             * @brief Register a keybind
-             * 
-             * @param action_key optional action key (acts like a ctrl, alt or shift)
-             * @param key 
-             * @param keybind_actions
-             */
-            void registerKeybind(
-                pros::controller_digital_e_t key,
-                keybind_actions_s_t keybind_actions,
-                std::optional<pros::controller_digital_e_t> action_key = std::nullopt,
-                std::string category = "Uncategorized");
-            
-            /** Update the state of the keybinds */
-            void update(pros::controller_digital_e_t key);
-
-            /** Run the keybinds */
-            void run(pros::controller_digital_e_t key);
-
             /** Start the button handler */
             void start();
 
@@ -145,6 +145,7 @@ namespace bmapping {
             /** @return interval in milliseconds */
             int getDelay() const;
             
+            /** @return registered keybinds ids */
             std::set<std::string> getKeybindIds();
 
             /** Reset all keybinds */

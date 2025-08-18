@@ -19,19 +19,19 @@ namespace bmapping {
         }
     }
 
-    KeybindBuilder& KeybindBuilder::onPress(keybind_method_t callback) {
+    KeybindBuilder& KeybindBuilder::onPress(keybind_method_t callback, bool tasked) {
         log.debug("onPress callback set.");
         actions.onPress = callback;
         return *this;
     }
 
-    KeybindBuilder& KeybindBuilder::onHold(keybind_method_t callback) {
+    KeybindBuilder& KeybindBuilder::onHold(keybind_method_t callback, bool tasked) {
         log.debug("onHold callback set.");
         actions.onHold = callback;
         return *this;
     }
 
-    KeybindBuilder& KeybindBuilder::onRelease(keybind_method_t callback) {
+    KeybindBuilder& KeybindBuilder::onRelease(keybind_method_t callback, bool tasked) {
         log.debug("onRelease callback set.");
         actions.onRelease = callback;
         return *this;
@@ -95,42 +95,47 @@ namespace bmapping {
         }
     }
 
+    void ButtonHandler::executeAction(const std::string& name, const std::string& id, keybind_method_t action, bool runAsTask) {
+        if (!action) return;
+
+        log.debug(std::format("Keybind {} {}", id, name));
+
+        if (runAsTask) {
+            pros::Task([=]{action();});
+        } else {
+            action();
+        }
+    }
+
+    void ButtonHandler::handleKeybind(keybind_s_t keybind) {
+        keybind_state_s_t state = keybind.state;
+        keybind_actions_s_t action = keybind.actions;
+
+        if (state.isPressed && !state.wasPressed) {
+            executeAction("onPress", keybind.id, action.onPress, action.onPressTask);
+        }
+        if (state.isHeld) {
+            executeAction("onHold", keybind.id, action.onHold, action.onHoldTask);
+        }
+        if (!state.isPressed && state.wasPressed) {
+            executeAction("onRelease", keybind.id, action.onRelease, action.onReleaseTask);
+        }
+    }
+
     void ButtonHandler::run(pros::controller_digital_e_t key) {
         if (this->keybinds.contains(key)) {
-            keybind_s_t& keybind = this->keybinds[key];
-            if (keybind.state.isPressed && !keybind.state.wasPressed && keybind.actions.onPress) {
-                log.debug(std::format("Keybind {} onPress", keybind.id));
-                keybind.actions.onPress();
-
-            } else if (keybind.state.isHeld && keybind.actions.onHold) {
-                log.debug(std::format("Keybind {} onHold", keybind.id));
-                keybind.actions.onHold();
-
-            } else if (!keybind.state.isPressed && keybind.state.wasPressed && keybind.actions.onRelease) {
-                log.debug(std::format("Keybind {} onRelease", keybind.id));
-                keybind.actions.onRelease();
-            }
+            handleKeybind(this->keybinds[key]);
         }
 
         if (this->action_keybinds.contains(key)) {
             keybind_s_t& action_keybind = this->action_keybinds[key];
-            if (action_keybind.state.isPressed && !action_keybind.state.wasPressed && action_keybind.actions.onPress) {
-                log.debug(std::format("Keybind {} onPress", action_keybind.id));
-                action_keybind.actions.onPress();
+            handleKeybind(action_keybind);
 
-            } else if (action_keybind.state.isHeld && action_keybind.actions.onHold) {
-                log.debug(std::format("Keybind {} onHold", action_keybind.id));
-                action_keybind.actions.onHold();
-
-            } else if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && action_keybind.actions.onRelease) {
-                log.debug(std::format("Keybind {} onRelease", action_keybind.id));
-                action_keybind.actions.onRelease();
-                if (this->keybinds.contains(key)) {
-                    keybind_s_t& keybind = this->keybinds[key];
-                    if (keybind.state.isPressed && keybind.actions.onPress) {
-                        log.debug(std::format("Keybind fallback from onRelease {} to onPress {}", action_keybind.id, keybind.id));
-                        keybind.actions.onPress();
-                    }
+            if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && this->keybinds.contains(key)) {
+                keybind_s_t& keybind = this->keybinds[key];
+                if (keybind.state.isPressed && keybind.actions.onPress) {
+                    log.debug(std::format("Keybind fallback from onRelease {} to onPress {}", action_keybind.id, keybind.id));
+                    executeAction("onPress", keybind.id, keybind.actions.onPress, keybind.actions.onPressTask);
                 }
             }
         }
