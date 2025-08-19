@@ -1,7 +1,6 @@
 #include "BMapper/Button.hpp"
 #include "pros/rtos.hpp"
 #include <format>
-#include <optional>
 
 namespace BMapper {
     KeybindBuilder::KeybindBuilder(pros::controller_digital_e_t key, BMapper::ButtonHandler& handler, std::optional<pros::controller_digital_e_t> modifier): key(key), handler(handler), actionKey(modifier) {
