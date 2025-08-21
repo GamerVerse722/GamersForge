@@ -1,10 +1,18 @@
 #include "main.h"
-#include "PROSLogger/PROSLogger.hpp"
-#include "bmapper/button.hpp"
-#include "pros/misc.h"
-#include "pros/screen.h"
-#include <cstdlib>
-#include <optional>
+
+#include "gamers-forge/proslogger.hpp"
+#include "gamers-forge/bmapper.hpp"
+
+#include <queue>
+
+std::queue<std::string> logs_sub;
+
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+pros::MotorGroup left_mg({-1, 2, 3});
+pros::MotorGroup right_mg({4, -5, -6});
+
+BMapper::ButtonHandler button_handler(master);
+PROSLogger::Logger logger("PROSLogger");
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -13,6 +21,37 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	PROSLogger::Manager::subscribe([&](const PROSLogger::LoggerEvent event) {
+        logs_sub.push(event.message);
+    });
+
+    PROSLogger::Manager::setLevel(PROSLogger::LogLevel::DEBUG);
+
+    logger.debug("Debug Level");
+    // result: [00:00:000] [Debug] [PROSLogger] Debug Level
+
+    logger.info("Info Level");
+    // result: [00:00:000] [Info] [PROSLogger] Info Level
+
+    logger.warn("Warn Level");
+    // result: [00:00:000] [Warn] [PROSLogger] Warn Level
+
+    logger.error("Error Level");
+    // result: [00:00:000] [Error] [PROSLogger] Error Level
+
+    PROSLogger::Manager::setLevel(PROSLogger::LogLevel::WARN);
+
+    logger.debug("Debug Level");
+    // result: None
+
+    logger.info("Info Level");
+    // result: None
+
+    logger.warn("Warn Level");
+    // result: [00:00:000] [Warn] [PROSLogger] Warn Level
+
+    logger.error("Error Level");
+    // result: [00:00:000] [Error] [PROSLogger] Error Level
 }
 
 /**
@@ -60,43 +99,43 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({-1, 2, 3});
-	pros::MotorGroup right_mg({4, -5, -6});
+    PROSLogger::Manager::setLevel(PROSLogger::LogLevel::WARN);
 
-	using namespace BMapper;
-	using namespace PROSLogger;
-	ButtonHandler button_handler(master);
+    button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT)
+        .setCategory("RightMotor")
+        .onPress([&]() -> void {
+            right_mg.move(50);
+        })
+        .onHold([&]() -> void {
+            pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 1, "%d", rand() % 101);
+        })
+        .onRelease([&]() -> void {
+            right_mg.move(0);
+        });
 
-	Manager::setLevel(LogLevel::DEBUG);
+    button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_DOWN)
+        .setCategory("RightMotor")
+        .onPress([&]() -> void {
+            right_mg.move(-50);
+        })
+        .onHold([&]() -> void {
+            pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 2, "%d", rand() % 51);
+        })
+        .onRelease([&]() -> void {
+            right_mg.move(0);
+        });
 
-	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT)
-		.setCategory("RightMotor")
-		.onPress([&]() -> void {
-			right_mg.move(50);
-		})
-		.onHold([&]() -> void {
-			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 1, "%d", rand() % 101);
-		})
-		.onRelease([&]() -> void {
-			right_mg.move(0);
-		});
+    button_handler.start();
 
-	button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_DOWN)
-		.setCategory("RightMotor")
-		.onPress([&]() -> void {
-			right_mg.move(-50);
-		})
-		.onHold([&]() -> void {
-			pros::screen::print(pros::text_format_e_t::E_TEXT_MEDIUM, 2, "%d", rand() % 51);
-		})
-		.onRelease([&]() -> void {
-			right_mg.move(0);
-		});
+    while (true) {
+        if (!logs_sub.empty()) {
+            pros::lcd::set_text(1, logs_sub.front());
+            logs_sub.pop();
 
-	button_handler.start();
-	
-	while (true) {
-		pros::delay(20);
-	}
+        } else {
+            pros::lcd::set_text(1, "");
+        }
+
+        pros::delay(1000);
+    }
 }
