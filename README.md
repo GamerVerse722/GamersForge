@@ -1,23 +1,16 @@
-# BMapper
+# GamersForge
 
 ## Overview
 
-- BMapper is a program for vex pros which simplifies registering button actions.
+- GamersForge is a program for vex pros which simplifies registering button actions.
 
 ## Installation
 
-- To install BMapper run these program in integrated terminal in vex pros.
+- To install GamersForge run these program in integrated terminal in vex pros.
 
 ```
-pros c add-depot BMapper https://raw.githubusercontent.com/GamerVerse722/BMapper/refs/heads/depot/stable.json
-pros c apply BMapper
-```
-
-- A dependency required to install BMapper is PROSLogger
-
-```
-pros c add-depot PROSLogger https://raw.githubusercontent.com/GamerVerse722/PROSLogger/refs/heads/depot/stable.json
-pros c apply PROSLogger
+pros c add-depot GamersForge https://raw.githubusercontent.com/GamerVerse722/GamersForge/refs/heads/depot/stable.json
+pros c apply GamersForge
 ```
 
 ## Developer Notes
