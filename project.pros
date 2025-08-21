@@ -594,7 +594,7 @@
     "upload_options": {
       "description": "logger and bmapper testing",
       "icon": "pros",
-      "slot": 2
+      "slot": 3
     },
     "use_early_access": true
   }
