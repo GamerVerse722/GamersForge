@@ -4,7 +4,7 @@
 
 - GamersForge is a program for vex pros which simplifies registering button actions.
 
-## Installation
+## Installation (None Functional copy over the includes and src of gamers-forge)
 
 - To install GamersForge run these program in integrated terminal in vex pros.
 
