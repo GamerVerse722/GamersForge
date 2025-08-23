@@ -99,7 +99,8 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    PROSLogger::Manager::setLevel(PROSLogger::LogLevel::WARN);
+    PROSLogger::Manager::setLevel(PROSLogger::LogLevel::DEBUG);
+    // button_handler.setDelay(100);
 
     button_handler.bind(pros::E_CONTROLLER_DIGITAL_LEFT)
         .setCategory("RightMotor")

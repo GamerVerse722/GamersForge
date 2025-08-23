@@ -106,7 +106,8 @@ namespace BMapper {
                 std::string category = "Uncategorized");
 
             void executeAction(const std::string& name, const std::string& id, keybind_method_t action, bool runAsTask);
-            void handleKeybind(keybind_s_t keybind);
+            void handleKeybind(pros::controller_digital_e_t key);
+            void handleActionKeybind(pros::controller_digital_e_t key);
 
             void update(pros::controller_digital_e_t key);
             void run(pros::controller_digital_e_t key);

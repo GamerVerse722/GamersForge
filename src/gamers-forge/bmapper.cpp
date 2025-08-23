@@ -108,12 +108,16 @@ namespace BMapper {
         }
     }
 
-    void ButtonHandler::handleKeybind(keybind_s_t keybind) {
+    void ButtonHandler::handleKeybind(pros::controller_digital_e_t key) {
+        keybind_s_t keybind = this->keybinds[key];
         keybind_state_s_t state = keybind.state;
         keybind_actions_s_t action = keybind.actions;
 
         if (state.isPressed && !state.wasPressed) {
-            executeAction("onPress", keybind.id, action.onPress, action.onPressTask);
+            if (this->action_keybinds.contains(key) && !this->action_keybinds[key].state.isPressed && this->action_keybinds[key].state.wasPressed) {
+            } else {
+                executeAction("onPress", keybind.id, action.onPress, action.onPressTask);
+            }
         }
         if (state.isHeld) {
             executeAction("onHold", keybind.id, action.onHold, action.onHoldTask);
@@ -123,22 +127,34 @@ namespace BMapper {
         }
     }
 
+    void ButtonHandler::handleActionKeybind(pros::controller_digital_e_t key) {
+        keybind_s_t keybind_action = this->action_keybinds[key];
+        keybind_state_s_t state = keybind_action.state;
+        keybind_actions_s_t action = keybind_action.actions;
+
+        if (state.isPressed && !state.wasPressed) {
+            executeAction("onPress", keybind_action.id, action.onPress, action.onPressTask);
+        }
+        if (state.isHeld) {
+            executeAction("onHold", keybind_action.id, action.onHold, action.onHoldTask);
+        }
+        if (!state.isPressed && state.wasPressed) {
+            executeAction("onRelease", keybind_action.id, action.onRelease, action.onReleaseTask);
+
+            if (this->keybinds.contains(key) && this->keybinds[key].state.isPressed && !this->keybinds[key].state.wasPressed) {
+                keybind_s_t& keybind = this->keybinds[key];
+                executeAction("onPress", keybind.id, keybind.actions.onPress, keybind.actions.onPressTask);
+            }
+        }
+    }
+
     void ButtonHandler::run(pros::controller_digital_e_t key) {
         if (this->keybinds.contains(key)) {
-            handleKeybind(this->keybinds[key]);
+            handleKeybind(key);
         }
 
         if (this->action_keybinds.contains(key)) {
-            keybind_s_t& action_keybind = this->action_keybinds[key];
-            handleKeybind(action_keybind);
-
-            if (!action_keybind.state.isPressed && action_keybind.state.wasPressed && this->keybinds.contains(key)) {
-                keybind_s_t& keybind = this->keybinds[key];
-                if (keybind.state.isPressed && keybind.actions.onPress) {
-                    log.debug(std::format("Keybind fallback from onRelease {} to onPress {}", action_keybind.id, keybind.id));
-                    executeAction("onPress", keybind.id, keybind.actions.onPress, keybind.actions.onPressTask);
-                }
-            }
+            handleActionKeybind(key);
         }
     }
     
