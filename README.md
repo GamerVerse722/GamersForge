@@ -2,36 +2,21 @@
 
 ## Overview
 
-- GamersForge is a program for vex pros which simplifies registering button actions.
+- GamersForge has 2 program inside of it:
+  - PROSLogger logs messages in console with event listeners
+  - BMapper simplilies the proccess of registering keybinds to actions and uses PROSLogger for debug.
 
-## Installation (None Functional copy over the includes and src of gamers-forge)
+## Installation
 
-- To install GamersForge run these program in integrated terminal in vex pros.
+### 1. Download the latest version of the sync script
+- Go to [script.py](https://github.com/GamerVerse722/GamersForge/blob/main/script.py) and click the download button.
 
-```
-pros c add-depot GamersForge https://raw.githubusercontent.com/GamerVerse722/GamersForge/refs/heads/depot/stable.json
-pros c apply GamersForge
-```
+### 2. Place it in your PROS project root
+- The script should be in the same path as your `project.pros` file
 
-## Developer Notes
+### 3. Run the installation script
+- Run the `sync.py` file to install all necessary components and automatically update your code when needed.
 
-### Build Instruction
-
-- To build a template, run:
-
+  ```console
+  py sync.py
   ```
-  pros make template
-  ```
-
-### Makefile Configuration
-
-- Customize the `Makefile` by modifying the following variables:
-
-- **`IS_LIBRARY`** – Defines if the program is a library.
-
-  - Example: `IS_LIBRARY:=1` _(1 = true, 0 = false)_
-
-- **`LIBNAME`** – Sets the library name.
-  - Example: `LIBNAME:=BMapper`
-- **`VERSION`** – Specifies the current version of the library.
-  - Example: `VERSION:=1.0.0`
