@@ -7,6 +7,7 @@ namespace AutoManager {
     enum AutomMode {
         QUALIFICATIONS,
         ELIMINATIONS,
+        AWP,
         SKILLS,
         NONE
     };

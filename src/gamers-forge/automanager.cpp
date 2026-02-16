@@ -12,6 +12,7 @@ namespace AutoManager {
     // Fixed size callback arrays
     static std::array<callback_method, 5> qualification_methods {};
     static std::array<callback_method, 5> elimination_methods {};
+    static std::array<callback_method, 5> awp_methods {};
     static callback_method skills_callback {nullptr};
     static callback_method none_callback {nullptr};
 
@@ -39,6 +40,13 @@ namespace AutoManager {
                 else { log.debug("Registering ELIMINATION callback"); }
 
                 elimination_methods[index] = callback;
+                break;
+
+            case AutomMode::AWP:
+                if (awp_methods[index]) { log.warn("Overwriting existing AWP callback"); }
+                else { log.debug("Registering AWP callback"); }
+
+                awp_methods[index] = callback;
                 break;
 
             case AutomMode::SKILLS:
@@ -70,6 +78,7 @@ namespace AutoManager {
         switch (mode) {
             case AutomMode::QUALIFICATIONS: current_autom = qualification_methods[index]; break;
             case AutomMode::ELIMINATIONS: current_autom = elimination_methods[index]; break;
+            case AutomMode::AWP: current_autom = awp_methods[index]; break;
             case AutomMode::SKILLS: current_autom = skills_callback; break;
             case AutomMode::NONE: current_autom = none_callback; break;
             default: current_autom = nullptr; break;
