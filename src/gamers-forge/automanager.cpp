@@ -151,6 +151,7 @@ namespace AutoManager::Convert {
         switch (mode) {
             case AutomMode::QUALIFICATIONS: return "Qualifications";
             case AutomMode::ELIMINATIONS: return "Eliminations";
+            case AutomMode::AWP: return "AWP";
             case AutomMode::SKILLS: return "Skills";
             case AutomMode::NONE: return "None";
             default: return "Unknown";
