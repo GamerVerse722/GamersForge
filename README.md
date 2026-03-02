@@ -2,9 +2,10 @@
 
 ## Overview
 
-- GamersForge has 2 program inside of it:
-  - PROSLogger logs messages in console with event listeners
+- GamersForge has 3 program inside of it:
+  - PROSLogger logs messages in console with event listeners.
   - BMapper simplilies the proccess of registering keybinds to actions and uses PROSLogger for debug.
+  - AutoManager simpilies the way autonomous is handled for easy access.
 
 ## Installation
 
